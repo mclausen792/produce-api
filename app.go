@@ -6,9 +6,9 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	. "github.com/mclausen792/just-ripe-api/config"
-	. "github.com/mclausen792/just-ripe-api/dao"
-	. "github.com/mclausen792/just-ripe-api/models"
+	. "github.com/mclausen792/produce-api/config"
+	. "github.com/mclausen792/produce-api/dao"
+	. "github.com/mclausen792/produce-api/models"
 )
 
 var config = Config{}

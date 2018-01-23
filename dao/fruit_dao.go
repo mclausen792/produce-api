@@ -3,7 +3,7 @@ package dao
 import (
 	"log"
 
-	_ "github.com/mclausen792/just-ripe-api/models"
+	. "github.com/mclausen792/produce-api/models"
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
