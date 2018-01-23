@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"os"
 
 	. "just-ripe/config"
 	. "just-ripe/dao"
@@ -109,6 +110,10 @@ func init() {
 
 // Define HTTP request routes
 func main() {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "3001"
+	}
 	r := mux.NewRouter()
 	r.HandleFunc("/fruit", AllFruitsEndPoint).Methods("GET")
 	r.HandleFunc("/vegetable", AllVegetablesEndPoint).Methods("GET")
@@ -116,7 +121,7 @@ func main() {
 	r.HandleFunc("/vegetable", UpdateVegetableEndPoint).Methods("PUT")
 	r.HandleFunc("/fruit/{id}", FindFruitEndpoint).Methods("GET")
 	r.HandleFunc("/vegetable/{id}", FindVegetableEndpoint).Methods("GET")
-	if err := http.ListenAndServe(":3001", r); err != nil {
+	if err := http.ListenAndServe(":"+port, r); err != nil {
 		log.Fatal(err)
 	}
 }
