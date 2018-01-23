@@ -97,9 +97,6 @@ func respondWithJson(w http.ResponseWriter, code int, payload interface{}) {
 
 // Parse the configuration file 'config.toml', and establish a connection to DB
 func init() {
-	fmt.Println("here")
-	port := os.Getenv("PORT")
-	fmt.Println("running on Port" + port)
 	config.Read()
 	dao.DialInfo = &mgo.DialInfo{
 		Addrs:    []string{config.Server},
@@ -107,12 +104,10 @@ func init() {
 		Username: config.Username,
 		Password: config.Password,
 	}
-	fmt.Println("not the config")
 
 	dao.Server = config.Server
 	dao.Database = config.Database
 	dao.Connect()
-	fmt.Println("not the connect")
 
 }
 
