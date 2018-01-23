@@ -5,42 +5,77 @@ import (
 	"log"
 	"net/http"
 
+	. "just-ripe/config"
+	. "just-ripe/dao"
+	. "just-ripe/models"
+
 	"github.com/gorilla/mux"
-	. "github.com/mclausen792/produce-api/config"
-	. "github.com/mclausen792/produce-api/dao"
-	. "github.com/mclausen792/produce-api/models"
+	mgo "gopkg.in/mgo.v2"
 )
 
 var config = Config{}
 var dao = FruitsDAO{}
 
 func AllFruitsEndPoint(w http.ResponseWriter, r *http.Request) {
-	fruits, err := dao.FindAll()
+	fruits, err := dao.FindAllFruit()
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	respondWithJson(w, http.StatusOK, movies)
+	respondWithJson(w, http.StatusOK, fruits)
+}
+
+func AllVegetablesEndPoint(w http.ResponseWriter, r *http.Request) {
+	fruits, err := dao.FindAllVegetables()
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	respondWithJson(w, http.StatusOK, fruits)
 }
 
 func FindFruitEndpoint(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	fruit, err := dao.FindById(params["id"])
+	fruit, err := dao.FindFruitById(params["id"])
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid Id")
 		return
 	}
-	respondWithJson(w, http.StatusOK, movie)
+	respondWithJson(w, http.StatusOK, fruit)
+}
+
+func FindVegetableEndpoint(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	fruit, err := dao.FindVegetableById(params["id"])
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid Id")
+		return
+	}
+	respondWithJson(w, http.StatusOK, fruit)
 }
 
 func UpdateFruitEndPoint(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	var fruit Fruit
-	if err := json.NewDecoder(r.Body).Decode(&movie); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&fruit); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
-	if err := dao.Update(movie); err != nil {
+	if err := dao.UpdateFruit(fruit); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	respondWithJson(w, http.StatusOK, map[string]string{"result": "success"})
+}
+
+func UpdateVegetableEndPoint(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+	var veggies Vegetable
+	if err := json.NewDecoder(r.Body).Decode(&veggies); err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+	if err := dao.UpdateVegetable(veggies); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -61,7 +96,12 @@ func respondWithJson(w http.ResponseWriter, code int, payload interface{}) {
 // Parse the configuration file 'config.toml', and establish a connection to DB
 func init() {
 	config.Read()
-
+	dao.DialInfo = &mgo.DialInfo{
+		Addrs:    []string{config.Server},
+		Database: config.Database,
+		Username: config.Username,
+		Password: config.Password,
+	}
 	dao.Server = config.Server
 	dao.Database = config.Database
 	dao.Connect()
@@ -70,9 +110,12 @@ func init() {
 // Define HTTP request routes
 func main() {
 	r := mux.NewRouter()
-	r.HandleFunc("/fruit", AllMoviesEndPoint).Methods("GET")
-	r.HandleFunc("/fruit", UpdateMovieEndPoint).Methods("PUT")
-	r.HandleFunc("/fruit/{id}", FindMovieEndpoint).Methods("GET")
+	r.HandleFunc("/fruit", AllFruitsEndPoint).Methods("GET")
+	r.HandleFunc("/vegetable", AllVegetablesEndPoint).Methods("GET")
+	r.HandleFunc("/fruit", UpdateFruitEndPoint).Methods("PUT")
+	r.HandleFunc("/vegetable", UpdateVegetableEndPoint).Methods("PUT")
+	r.HandleFunc("/fruit/{id}", FindFruitEndpoint).Methods("GET")
+	r.HandleFunc("/vegetable/{id}", FindVegetableEndpoint).Methods("GET")
 	if err := http.ListenAndServe(":3001", r); err != nil {
 		log.Fatal(err)
 	}

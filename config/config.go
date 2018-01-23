@@ -10,6 +10,8 @@ import (
 type Config struct {
 	Server   string
 	Database string
+	Username string
+	Password string
 }
 
 // Read and parse the configuration file
