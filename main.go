@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -103,9 +104,11 @@ func init() {
 		Username: config.Username,
 		Password: config.Password,
 	}
+
 	dao.Server = config.Server
 	dao.Database = config.Database
 	dao.Connect()
+
 }
 
 // Define HTTP request routes
@@ -121,6 +124,7 @@ func main() {
 	r.HandleFunc("/vegetable", UpdateVegetableEndPoint).Methods("PUT")
 	r.HandleFunc("/fruit/{id}", FindFruitEndpoint).Methods("GET")
 	r.HandleFunc("/vegetable/{id}", FindVegetableEndpoint).Methods("GET")
+	fmt.Println("running on Port" + port)
 	if err := http.ListenAndServe(":"+port, r); err != nil {
 		log.Fatal(err)
 	}
