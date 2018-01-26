@@ -20,6 +20,7 @@ var db *mgo.Database
 const (
 	FRUITCOLLECTION     = "Fruit"
 	VEGETABLECOLLECTION = "Vegetable"
+	NEWCOLLECTION       = "Fruits"
 )
 
 func (m *FruitsDAO) Connect() {
