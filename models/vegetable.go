@@ -9,4 +9,5 @@ type Vegetable struct {
 	Store  string        `bson:"store" json:"store"`
 	Ripen  string        `bson:"ripen" json:"ripen"`
 	Season string        `bson:"season" json:"season"`
+	Image  string        `bson:"image" json:"image"`
 }
