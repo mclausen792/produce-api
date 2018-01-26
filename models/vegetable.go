@@ -10,4 +10,5 @@ type Vegetable struct {
 	Ripen  string        `bson:"ripen" json:"ripen"`
 	Season string        `bson:"season" json:"season"`
 	Image  string        `bson:"image" json:"image"`
+	Count  int           `bson:"count" json:"count"`
 }
